@@ -1,13 +1,38 @@
+import matplotlib
+# Set a non-interactive backend before importing pyplot; see matplotlib.use()
+matplotlib.use('agg')
+
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import numpy as np
+from os.path import splitext
+
 from dooble.marble import Operator, Observable, Item
-
-area = np.pi*100
-end_area = np.pi*50
+from dooble.backend import get_preferred_backend
 
 
-def render_to_file(marble, filename, theme):
+area = np.pi * 100
+end_area = np.pi * 50
+
+
+def render_to_file(marble, filename, theme, suffix=None):
+
+    # If no explicit suffix is given, look at the filename or default to '.png'
+    split = splitext(filename)
+    if not suffix:
+        suffix = split[1] or '.png'
+    elif suffix[0] != '.':
+        suffix = '.' + suffix
+
+    # Make sure the filename ends with the appropriate suffix
+    if split[1] != suffix:
+        filename = split[0] + suffix
+
+    # Make matplotlib use the preferred backend, if it's not being used already
+    backend = get_preferred_backend(suffix)
+    if backend is not None and backend != matplotlib.get_backend():
+        matplotlib.use(backend, warn=False, force=True)
+
     height = len(marble.layers) * 0.7
     fig, ax = plt.subplots(figsize=(6.4, height), dpi=100)
 

@@ -49,8 +49,12 @@ The generated image looks like this:
 
 .. image:: examples/map.png
 
+You can create images in various other common formats, such as ``eps``, ``pdf``
+or ``svg`` -- courtesy of the versatile matplotlib_.
 
-*Higher order observables* can also be documented easilly:
+.. _matplotlib: https://matplotlib.org/
+
+*Higher order observables* can also be documented easily:
 
 .. code::
 
