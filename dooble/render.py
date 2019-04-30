@@ -15,7 +15,7 @@ area = np.pi * 100
 end_area = np.pi * 50
 
 
-def render_to_file(marble, filename, theme, suffix=None):
+def render_to_file(marble, filename, theme, suffix=None, **kwargs):
 
     # If no explicit suffix is given, look at the filename or default to '.png'
     split = splitext(filename)
@@ -33,8 +33,19 @@ def render_to_file(marble, filename, theme, suffix=None):
     if backend is not None and backend != matplotlib.get_backend():
         matplotlib.use(backend, warn=False, force=True)
 
-    height = len(marble.layers) * 0.7
-    fig, ax = plt.subplots(figsize=(6.4, height), dpi=100)
+    # Ignore the given figure size: set width = 6.4", height = 0.7" per layer
+    kwargs['figsize'] = 6.4, len(marble.layers) * 0.7
+
+    # Set standard figure args from theme
+    kwargs['facecolor'] = theme.background_color
+    kwargs['edgecolor'] = theme.operator_edge_color
+
+    # Set 100 pixels per inch if not specified
+    dpi = kwargs.get('dpi')
+    if dpi is None:
+        kwargs['dpi'] = 100
+
+    fig, ax = plt.subplots(**kwargs)
 
     def plt_y(y):
         return len(marble.layers) - y - 1
@@ -119,5 +130,5 @@ def render_to_file(marble, filename, theme, suffix=None):
                 horizontalalignment='center', verticalalignment='center')
 
     ax.set_axis_off()
-    plt.savefig(filename, dpi=fig.dpi)
+    plt.savefig(filename, **kwargs)
     plt.close()

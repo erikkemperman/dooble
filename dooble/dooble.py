@@ -3,15 +3,18 @@ from dooble.marble import Marble, Observable, Operator
 
 
 Theme = namedtuple('Theme', [
+    'background_color',
     'timeline_color',
     'emission_color',
     'item_color',
     'label_color',
     'operator_color',
     'operator_edge_color',
+
 ])
 
 default_theme = Theme(**{
+    'background_color':    '#FFFFFF',
     'timeline_color':      '#337AB7',
     'emission_color':      '#C0C0C0',
     'item_color':          '#E0E8FF',
