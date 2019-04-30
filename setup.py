@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'tatsu>=4.3',
+    'tatsu>=4.4',
     'matplotlib>=2.2'
 ]
 
