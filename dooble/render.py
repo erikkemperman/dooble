@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('agg')  # Set non-interactive backend before importing pyplot
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import numpy as np
