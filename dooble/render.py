@@ -66,14 +66,14 @@ def render_to_file(marble, filename, theme):
             for item in observable.items:
                 x.append(item.at)
                 y.append(plt_y(layer_index))
-            ax.scatter(x, y, s=area, c=None, edgecolors=theme.timeline_color, color=theme.item_color, alpha=1.0, linewidth='2')
+            ax.scatter(x, y, s=area, c=None, edgecolors=theme.item_edge_color, color=theme.item_face_color, alpha=1.0, linewidth='2')
 
             # label
             if observable.label is not None:
                 ax.scatter(
                     [observable.start], [plt_y(layer_index)], s=area, c=None, 
-                    edgecolors=theme.operator_edge_color, 
-                    color=theme.label_color, 
+                    edgecolors=theme.label_edge_color,
+                    color=theme.label_face_color,
                     alpha=1.0, linewidth='2')
                 ax.text(observable.start, plt_y(layer_index), observable.label, horizontalalignment='center', verticalalignment='center')
 
@@ -88,7 +88,7 @@ def render_to_file(marble, filename, theme):
             ax.add_patch(Rectangle(
                 (operator.start, y), operator.end-operator.start, 0.35,
                 alpha=1, edgecolor=theme.operator_edge_color,
-                facecolor=theme.operator_color,
+                facecolor=theme.operator_face_color,
                 linewidth='2'))
             ax.text(
                 operator.start + (operator.end-operator.start)/2, y + 0.15,

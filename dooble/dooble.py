@@ -5,18 +5,22 @@ from dooble.marble import Marble, Observable, Operator
 Theme = namedtuple('Theme', [
     'timeline_color',
     'emission_color',
-    'item_color',
-    'label_color',
-    'operator_color',
+    'item_face_color',
+    'item_edge_color',
+    'label_face_color',
+    'label_edge_color',
+    'operator_face_color',
     'operator_edge_color',
 ])
 
 default_theme = Theme(**{
     'timeline_color':      '#337AB7',
     'emission_color':      '#C0C0C0',
-    'item_color':          '#E0E8FF',
-    'label_color':         '#337AB7',
-    'operator_color':      '#F0F0F0',
+    'item_face_color':     '#E0E8FF',
+    'item_edge_color':     '#337AB7',
+    'label_face_color':    '#337AB7',
+    'label_edge_color':    '#337AB7',
+    'operator_face_color': '#F0F0F0',
     'operator_edge_color': '#337AB7',
 })
 
