@@ -117,8 +117,8 @@ class Marble(object):
                 items = []
                 top_layer = layer_index
             elif type(layer) is Observable:
-                if layer.label is not None:
-                    items.append((layer.start, layer_index))
+                # if layer.label is not None:
+                #     items.append((layer.start, layer_index))
                 for item in layer.items:
                     items.append((item.at, layer_index))
 

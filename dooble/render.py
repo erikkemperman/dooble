@@ -16,7 +16,6 @@ end_area = np.pi * 50
 
 
 def render_to_file(marble, filename, theme, suffix=None, **kwargs):
-
     # If no explicit suffix is given, look at the filename or default to '.png'
     split = splitext(filename)
     if not suffix:
@@ -35,10 +34,6 @@ def render_to_file(marble, filename, theme, suffix=None, **kwargs):
 
     # Ignore the given figure size: set width = 6.4", height = 0.7" per layer
     kwargs['figsize'] = 6.4, len(marble.layers) * 0.7
-
-    # Set standard figure args from theme
-    kwargs['facecolor'] = theme.background_color
-    kwargs['edgecolor'] = theme.operator_edge_color
 
     # Set 100 pixels per inch if not specified
     dpi = kwargs.get('dpi')
@@ -100,32 +95,44 @@ def render_to_file(marble, filename, theme, suffix=None, **kwargs):
             for item in observable.items:
                 x.append(item.at)
                 y.append(plt_y(layer_index))
-            ax.scatter(x, y, s=area, c=None, edgecolors=theme.timeline_color, color=theme.item_color, alpha=1.0, linewidth='2')
 
             # label
             if observable.label is not None:
-                ax.scatter(
-                    [observable.start], [plt_y(layer_index)], s=area, c=None, 
-                    edgecolors=theme.operator_edge_color, 
-                    color=theme.label_color, 
-                    alpha=1.0, linewidth='2')
-                ax.text(observable.start, plt_y(layer_index), observable.label, horizontalalignment='center', verticalalignment='center')
+                ax.text(observable.start, plt_y(layer_index), observable.label,
+                        bbox=dict(
+                            boxstyle='round',
+                            pad=0.42,
+                            edgecolor=theme.operator_edge_color,
+                            facecolor=theme.label_color,
+                            linewidth=2
+                        ),
+                        horizontalalignment='center',
+                        verticalalignment='center')
 
             # items text
             for item in observable.items:
                 text = str(item.item) if type(item) is Item else ''
-                ax.text(item.at, plt_y(layer_index), text, horizontalalignment='center', verticalalignment='center')
+                ax.text(item.at, plt_y(layer_index), text,
+                        bbox=dict(
+                            boxstyle='circle',
+                            pad=0.42,
+                            edgecolor=theme.operator_edge_color,
+                            facecolor=theme.item_color,
+                            linewidth=2
+                        ),
+                        horizontalalignment='center',
+                        verticalalignment='center')
 
         elif type(layer) is Operator:
             operator = layer
-            y = plt_y(layer_index) - 0.15
+            y = plt_y(layer_index) - 0.16
             ax.add_patch(Rectangle(
-                (operator.start, y), operator.end-operator.start, 0.35,
+                (operator.start, y), operator.end - operator.start, 0.35,
                 alpha=1, edgecolor=theme.operator_edge_color,
                 facecolor=theme.operator_color,
                 linewidth='2'))
             ax.text(
-                operator.start + (operator.end-operator.start)/2, y + 0.15,
+                (operator.end + operator.start) / 2, y + 0.16,
                 operator.text,
                 horizontalalignment='center', verticalalignment='center')
 
