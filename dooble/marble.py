@@ -57,13 +57,16 @@ class Marble(object):
         self.layers.append(operator)
 
     def _compute_higher_order_links(self):
-        def nearest_links(parents, childs):
+        def nearest_links(parents, children):
             links = []
             for parent in parents:
                 nearest = None
-                for child in childs:
-                    if nearest is None or abs(parent[0] - child[0]) < abs(parent[0] - nearest[0]):
+                dist = None
+                for child in children:
+                    d = abs(parent[0] - child[0])
+                    if nearest is None or d < dist:
                         nearest = child
+                        dist = d
 
                 if nearest is not None:
                     links.append(Link(
@@ -73,23 +76,23 @@ class Marble(object):
 
             return links
 
-        childs = []
+        children = []
         parents = []
         links = []
         for layer_index, layer in enumerate(self.layers):
             if type(layer) is Operator:
-                links.extend(nearest_links(parents, childs))
-                childs = []
-                parents = []
+                links.extend(nearest_links(parents, children))
+                children.clear()
+                parents.clear()
             elif type(layer) is Observable:
                 if layer.is_child is True:
-                    childs.append((layer.start, layer_index))
+                    children.append((layer.start, layer_index))
                 else:
                     for item in layer.items:
                         if type(item) is ObsItem:
                             parents.append((item.at, layer_index))
 
-        links.extend(nearest_links(parents, childs))
+        links.extend(nearest_links(parents, children))
         return links
 
     def _compute_emmision_links(self):
@@ -114,7 +117,7 @@ class Marble(object):
         for layer_index, layer in enumerate(self.layers):
             if type(layer) is Operator:
                 links.extend(emission_links(top_layer, layer_index, items))
-                items = []
+                items.clear()
                 top_layer = layer_index
             elif type(layer) is Observable:
                 if layer.label is not None:
