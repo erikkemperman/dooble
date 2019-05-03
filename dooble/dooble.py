@@ -18,7 +18,7 @@ default_theme = Theme(**{
     'emission_color':      '#C0C0C0',
     'item_face_color':     '#E0E8FF',
     'item_edge_color':     '#337AB7',
-    'label_face_color':    '#337AB7',
+    'label_face_color':    '#55EFFE',
     'label_edge_color':    '#337AB7',
     'operator_face_color': '#F0F0F0',
     'operator_edge_color': '#337AB7',

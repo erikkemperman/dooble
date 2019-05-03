@@ -1,12 +1,15 @@
+from functools import reduce
+from itertools import chain
+from sys import maxsize
 import matplotlib
 matplotlib.use('agg')  # Set non-interactive backend before importing pyplot
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, BoxStyle
+from matplotlib.patches import BoxStyle, Rectangle, FancyBboxPatch
 
 from dooble.marble import Operator, Observable, Item
 
 
-POINTS_PER_INCH = 72
+POINTS_PER_INCH = 72.0
 DEFAULT_WIDTH = 6.4         # inches
 DEFAULT_LAYER_HEIGHT = 0.7  # inches
 
@@ -21,15 +24,6 @@ def render_to_file(marble, filename, theme, dpi=100,
     def plt_y(y):
         return (layers - y - 0.5) * points_per_layer
 
-    # Re-use some common keyword args
-    plot_args = dict(
-        scalex=True, scaley=False,
-        linewidth=2, solid_capstyle='round', dash_capstyle='round'
-    )
-    text_args = dict(
-        horizontalalignment='center', verticalalignment='center'
-    )
-
     # Setup up our figure
     fig, ax = plt.subplots(figsize=(width, height), dpi=dpi)
     ax.set_axis_off()
@@ -43,7 +37,7 @@ def render_to_file(marble, filename, theme, dpi=100,
             color=theme.timeline_color, linestyle='-',
             linewidth=2)
 
-    # Draw mission links
+    # Draw emission links
     for link in marble.emission_links:
         ax.plot(
             [link.from_x, link.to_x],
@@ -54,7 +48,7 @@ def render_to_file(marble, filename, theme, dpi=100,
     for layer_index, layer in enumerate(marble.layers):
         if type(layer) is Observable:
             observable = layer
-            marker = 9
+            marker = 5
             if layer.completed is not None:
                 marker = '|'
             elif layer.error is not None:
@@ -69,38 +63,43 @@ def render_to_file(marble, filename, theme, dpi=100,
 
             # label
             if observable.label is not None:
-                ax.scatter(
-                    [observable.start], [plt_y(layer_index)],
-                    edgecolors=theme.label_edge_color,
-                    color=theme.label_color, 
-                    linewidth=2)
-                ax.text(observable.start, plt_y(layer_index), observable.label,
-                    horizontalalignment='center', verticalalignment='center'
+                ax.text(observable.start, plt_y(layer_index), '@' + observable.label + '@',
+                        family='monospace',
+                        bbox=dict(
+                            boxstyle=BoxStyle(stylename='square', pad=0.42),
+                            edgecolor=theme.label_edge_color,
+                            facecolor=theme.label_face_color,
+                        ),
+                        horizontalalignment='center', verticalalignment='center'
                 )
 
             # items text
             for item in observable.items:
-                text = str(item.item) if type(item) is Item else ''
-                ax.text(item.at, plt_y(layer_index), ' ' + text + ' ',
+                text = str(item.item) if type(item) is Item else ' '
+                ax.text(item.at, plt_y(layer_index), text,
+                        family='monospace',
                         bbox=dict(
-                            boxstyle=BoxStyle(stylename='round', pad=0.42, rounding_size=0.7),
-                            facecolor=theme.item_color,
-                            edgecolor=theme.item_edge_color
+                            boxstyle=BoxStyle(stylename='round', pad=0.15, rounding_size=0.3),
+                            edgecolor=theme.item_edge_color,
+                            facecolor=theme.item_face_color,
                         ),
-                        horizontalalignment='center', verticalalignment='center')
+                        horizontalalignment='center', verticalalignment='center'
+                )
 
         elif type(layer) is Operator:
             operator = layer
-            y = plt_y(layer_index) - 0.15
-            ax.add_patch(Rectangle(
-                (operator.start, y), operator.end - operator.start, 0.34,
+            x = (operator.end + operator.start) / 2
+            y = plt_y(layer_index)
+            ax.add_patch(Rectangle((0, y - 12), 2*x, 24,
                 edgecolor=theme.operator_edge_color,
-                facecolor=theme.operator_color,
-                linewidth=2))
+                facecolor=theme.operator_face_color,
+            ))
             ax.text(
-                (operator.end + operator.start) / 2, y + 0.15,
-                operator.text,
-                horizontalalignment='center', verticalalignment='center')
+                (operator.end + operator.start) / 2, y,
+                ' ' + operator.text + ' ',
+                family='monospace',
+                horizontalalignment='center', verticalalignment='center'
+            )
 
     plt.savefig(filename, dpi=fig.dpi)
     plt.close()
